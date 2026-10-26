@@ -1,1 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important} body{margin:0} img{max-width:100%}</style>
+<title>Shore Thing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=IBM+Plex+Mono:wght@400;500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap">
+<style>
+/* Layout: a museum walk-through. Night-water hero, then numbered galleries along one column, objects shown with wall-label placards. */
+:root {
+  --bg: #eef2f1;
+  --panel: #ffffff;
+  --ink: #15242b;
+  --muted: #4f6369;
+  --line: #c6d1d0;
+  --accent: #b3261e;
+  --lantern: #b98a0c;
+  --fresh: #9cc7d1;
+  --hypoxic: #8a7f55;
+  --sand: #d9c9a3;
+  --night: #0c161b;
+  --night-ink: #e8eeec;
+  --night-muted: #9fb2b5;
+  --draft: #fff6d6;
+  --draft-ink: #5a4500;
+  --display: "Alfa Slab One", "Rockwell", "Georgia", serif;
+  --body: "Literata", "Georgia", "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1a1f; --panel: #15242b; --ink: #e5ecea; --muted: #9db0b3; --line: #2a3c43;
+    --accent: #f0625a; --lantern: #e6b941; --fresh: #3d7584; --hypoxic: #6b6340; --sand: #6e6246;
+    --draft: #2f2a12; --draft-ink: #f1dc94; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1a1f; --panel: #15242b; --ink: #e5ecea; --muted: #9db0b3; --line: #2a3c43;
+  --accent: #f0625a; --lantern: #e6b941; --fresh: #3d7584; --hypoxic: #6b6340; --sand: #6e6246;
+  --draft: #2f2a12; --draft-ink: #f1dc94; color-scheme: dark;
+}
 
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1.0625rem; line-height: 1.65; }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--lantern); outline-offset: 3px; }
+.label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Nav */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--night); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--night); color: var(--night-ink); border-bottom: 1px solid #22343b; }
+.nav .wrap { display: flex; align-items: center; gap: 20px; padding-block: 10px; overflow-x: auto; scrollbar-width: none; }
+.nav .brand { font-family: var(--display); font-size: 1.05rem; color: var(--night-ink); text-decoration: none; white-space: nowrap; }
+.nav ul { display: flex; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.nav a.go { color: var(--night-muted); text-decoration: none; white-space: nowrap; }
+.nav a.go:hover { color: var(--night-ink); }
+
+/* Hero */
+.hero { background: var(--night); color: var(--night-ink); }
+.hero .wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; padding-block: 56px 64px; }
+.hero .eyebrow { color: var(--night-muted); }
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3rem, 9vw, 5.6rem); line-height: 0.95; margin: 14px 0 6px; color: var(--night-ink); }
+.hero h1 em { font-style: normal; color: #f0625a; }
+.hero .sub { font-family: var(--display); font-size: clamp(1.15rem, 3vw, 1.5rem); color: #e6b941; margin-bottom: 22px; }
+.hero p.lede { color: var(--night-ink); max-width: 34em; }
+.question { margin-top: 24px; border-left: 3px solid #e6b941; padding: 4px 0 4px 16px; color: var(--night-ink); }
+.question .label { color: var(--night-muted); display: block; margin-bottom: 4px; }
+.hero figure { margin: 0; }
+.hero img { border-radius: 4px; display: block; width: 100%; height: auto; }
+.hero figcaption { font-family: var(--mono); font-size: 0.75rem; color: var(--night-muted); margin-top: 8px; }
+
+.draft { background: var(--draft); color: var(--draft-ink); border-bottom: 1px solid var(--line); }
+.draft .wrap { padding-block: 12px; font-size: 0.95rem; }
+
+/* Galleries */
+.gallery { padding-block: 64px; border-bottom: 1px solid var(--line); }
+.gallery-head { display: flex; gap: 18px; align-items: baseline; margin-bottom: 28px; flex-wrap: wrap; }
+.gallery-head .label { color: var(--accent); }
+.gallery h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.1; margin: 0; flex-basis: 100%; }
+.prose { max-width: 38em; display: grid; gap: 16px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+.two > * { min-width: 0; }
+figure.photo { margin: 0; }
+figure.photo img { display: block; width: 100%; height: auto; border-radius: 3px; border: 1px solid var(--line); }
+figure.photo figcaption { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+blockquote.panel { margin: 0; background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; font-size: 1rem; }
+blockquote.panel p { font-style: italic; }
+blockquote.panel cite { display: block; margin-top: 10px; font-style: normal; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+
+/* Timeline */
+.timeline { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 0; border-left: 2px solid var(--line); }
+.timeline li { position: relative; padding: 0 0 22px 24px; display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; }
+.timeline li::before { content: ""; position: absolute; left: -7px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--muted); }
+.timeline li.key::before { background: var(--accent); border-color: var(--accent); }
+.timeline .yr { font-family: var(--mono); font-size: 0.9rem; font-weight: 500; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.timeline li.key .yr { color: var(--accent); }
+
+/* Signs comparison */
+.signs { margin-top: 40px; overflow-x: auto; }
+.signs table { width: 100%; border-collapse: collapse; min-width: 520px; background: var(--panel); border: 1px solid var(--line); }
+.signs th, .signs td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.signs th { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.signs tr:last-child td { border-bottom: 0; }
+.signs .note { margin-top: 10px; font-size: 0.9rem; color: var(--muted); }
+
+/* Science */
+.diagram { margin: 8px 0 32px; background: var(--panel); border: 1px solid var(--line); padding: 16px; overflow-x: auto; }
+.diagram svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.diagram text { font-family: var(--mono); font-size: 13px; fill: var(--ink); }
+.diagram .quiet { fill: var(--muted); }
+.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.steps li { counter-increment: s; border-top: 2px solid var(--ink); padding-top: 12px; min-width: 0; }
+.steps li::before { content: "Step " counter(s); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+.steps h3 { font-family: var(--body); font-weight: 600; font-size: 1.05rem; margin: 0 0 6px; }
+.steps p { font-size: 0.95rem; }
+
+/* Objects with wall labels */
+.objects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.object { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.object img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 3px; border: 1px solid var(--line); display: block; max-width: 100%; }
+.placard { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 6px; }
+.placard .label { color: var(--muted); }
+.placard h3 { font-family: var(--body); font-weight: 600; font-size: 1.05rem; margin: 0; line-height: 1.3; }
+.placard p { font-size: 0.93rem; }
+.ph { background: repeating-linear-gradient(135deg, var(--panel), var(--panel) 10px, var(--bg) 10px, var(--bg) 20px); border: 1px dashed var(--muted); aspect-ratio: 3 / 4; display: grid; place-items: center; text-align: center; padding: 16px; color: var(--muted); font-family: var(--mono); font-size: 0.8rem; border-radius: 3px; }
+
+/* Voices */
+.voice { display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start; }
+.voice > * { min-width: 0; }
+.video-ph { aspect-ratio: 9 / 16; max-height: 460px; }
+.video-link { position: relative; display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--line); text-decoration: none; }
+.video-link img { display: block; width: 100%; height: auto; max-height: 480px; object-fit: cover; }
+.video-link .play { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; gap: 10px; background: var(--night); color: var(--night-ink); padding: 10px 14px; border-radius: 4px; font-family: var(--mono); font-size: 0.8rem; }
+.video-link .tri { width: 0; height: 0; border-left: 10px solid #e6b941; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+.video-link:hover .play { background: var(--accent); }
+.quotes { display: grid; gap: 18px; }
+.quote { border-left: 3px solid var(--lantern); padding-left: 16px; }
+.quote .todo { color: var(--muted); font-style: italic; }
+.quote .label { color: var(--muted); display: block; margin-top: 6px; }
+.fill { background: var(--draft); color: var(--draft-ink); padding: 0 4px; border-radius: 2px; }
+
+/* Sources */
+.sources ol { margin: 0; padding-left: 1.2em; display: grid; gap: 10px; max-width: 46em; font-size: 0.95rem; }
+.sources h3 { font-family: var(--mono); font-weight: 500; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 28px 0 12px; }
+footer { padding-block: 40px 56px; color: var(--muted); font-size: 0.9rem; }
+
+@media (max-width: 860px) {
+  .hero .wrap, .two, .voice { grid-template-columns: 1fr; }
+  .objects { grid-template-columns: 1fr 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .video-ph { max-height: 360px; aspect-ratio: 4 / 3; }
+}
+@media (max-width: 520px) {
+  .objects, .steps { grid-template-columns: 1fr; }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+  .gallery { padding-block: 44px; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+
+
+<nav class="nav" aria-label="Exhibit galleries">
+  <div class="wrap">
+    <a class="brand" href="#top">Shore Thing</a>
+    <ul>
+      <li><a class="go" href="#call">The Call</a></li>
+      <li><a class="go" href="#signs">The Signs</a></li>
+      <li><a class="go" href="#science">The Science</a></li>
+      <li><a class="go" href="#tools">The Tools</a></li>
+      <li><a class="go" href="#voices">Voices</a></li>
+      <li><a class="go" href="#sources">Sources</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="label eyebrow">A digital exhibit · Eastern Shore of Mobile Bay</span>
+      <h1>Shore <em>Thing</em></h1>
+      <div class="sub">The Mobile Bay Jubilee</div>
+      <p class="lede">On some summer nights, flounder, crabs and shrimp crowd into ankle-deep water along the Eastern Shore. Someone yells "Jubilee!" and the whole beach wakes up. This exhibit follows how that strange night became one of Fairhope's oldest traditions.</p>
+      <p class="question"><span class="label">Research question</span>How did the Mobile Bay jubilee go from a local mystery to a defining tradition for Eastern Shore towns like Fairhope?</p>
+    </div>
+    <figure>
+      <img src="img/sign-diagram.jpg" alt="Red JUBILEE! sign above the subtitle An Eastern Shore Seafood Phenomenon, with a science diagram and photos below" width="1400" height="1050">
+      <figcaption>Jubilee exhibit, Fairhope Museum of History</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section class="gallery" id="call">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 1</span><h2>The Midnight Call</h2></div>
+      <div class="two">
+        <div class="prose">
+          <p>A jubilee usually starts in the dark, a few hours before sunrise. Someone walking the beach sees flounder lying flat in a few inches of water and crabs crawling up the pilings. They shout the word, and phones start ringing up and down the shore.</p>
+          <p>Within minutes, families are wading in with gigs, nets and washtubs. The fish are sluggish and easy to catch. By sunrise the water clears up and whatever is left swims back to deep water.</p>
+          <blockquote class="panel">
+            <p>"No one can predict when or where a 'Jubilee' will occur. Rising to the beach will be a seafood delicatessen of shrimp, crab and flounder. Other sea creatures such as stingrays, eels and catfish cloud the water by the thousands."</p>
+            <cite>Exhibit panel, Fairhope Museum of History</cite>
+          </blockquote>
+          <blockquote class="panel">
+            <p>"This phenomenon can happen anywhere from Daphne to Point Clear and is known as a 'JUBILEE.'"</p>
+            <cite>Exhibit panel, Fairhope Museum of History</cite>
+          </blockquote>
+        </div>
+        <figure class="photo">
+          <img src="img/panels-beach.jpg" alt="Exhibit photos: a crowd of people wading along the beach with gigs, and a mass of fish at the water's edge" width="1050" height="1400" loading="lazy">
+          <figcaption>Exhibit photos: a beach crowd during a jubilee (top) and mullet with flounder below them at the water's edge. Fairhope Museum of History.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery" id="signs">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 2</span><h2>A Century of Watching the Water</h2></div>
+      <div class="two">
+        <div class="prose">
+          <p>People on the Eastern Shore were catching jubilees long before anyone could explain them. A Mobile newspaper wrote about one in 1867 and described it as something that happened every year.</p>
+          <p>Nobody had the science yet, so families learned the signs and passed them down. By 1964 the jubilee was so much a part of local life that the Junior League of Mobile named its cookbook <cite>Recipe Jubilee!</cite></p>
+          <blockquote class="panel">
+            <p>"Natives of the area know the signs to watch for—in the moon, the tide, and the winds."</p>
+            <cite>Recipe Jubilee!, Junior League of Mobile, 1964</cite>
+          </blockquote>
+        </div>
+        <figure class="photo">
+          <img src="img/cookbook.jpg" alt="Ink drawings of people catching fish, crabs and shrimp along a beach with piers, from the 1964 cookbook Recipe Jubilee!" width="1400" height="1001" loading="lazy">
+          <figcaption>Illustrated jubilee pages from <cite>Recipe Jubilee!</cite> (Junior League of Mobile, 1964).</figcaption>
+        </figure>
+      </div>
+
+      <ol class="timeline" aria-label="Jubilee timeline">
+        <li><span class="yr">1867</span><span>The <cite>Mobile Daily Register</cite> reports a jubilee and calls it a yearly event.</span></li>
+        <li><span class="yr">1912</span><span>The word "jubilee" first shows up in print for this event. Who first named it is unknown.</span></li>
+        <li><span class="yr">1946–1956</span><span>Harold Loesch collects records of 37 jubilees, from newspapers, interviews with fishermen and his own measurements.</span></li>
+        <li class="key"><span class="yr">1960</span><span>Loesch publishes the cause: the water near the bottom runs out of oxygen.</span></li>
+        <li><span class="yr">1964</span><span>The Junior League of Mobile publishes <cite>Recipe Jubilee!</cite></span></li>
+        <li><span class="yr">About 1969</span><span>James Dorgan, interviewed for this exhibit, begins 57 years on the Eastern Shore.</span></li>
+        <li><span class="yr">1973</span><span>Edwin May's larger study confirms Loesch's explanation.</span></li>
+        <li><span class="yr">Today</span><span>Daphne calls itself the Jubilee City and holds a Jubilee Festival every September.</span></li>
+      </ol>
+
+      <div class="signs">
+        <table>
+          <thead><tr><th scope="col">What locals watched for</th><th scope="col">What scientists list</th></tr></thead>
+          <tbody>
+            <tr><td>"Late August" (Dorgan)</td><td>Summer. In Loesch's records, 21 of 37 jubilees came in August.</td></tr>
+            <tr><td>"The winds" (cookbook); "an easterly breeze" (Dorgan)</td><td>Wind from the east</td></tr>
+            <tr><td>Checking "the waters all through the night" (museum)</td><td>Before sunrise</td></tr>
+            <tr><td>"It follows heavy rains" (Dorgan)</td><td>A layer of fresh river water on top of the bay</td></tr>
+            <tr><td>"The tide" (cookbook); "low tide" (Dorgan)</td><td>A rising tide. This is the one place memory and science disagree.</td></tr>
+            <tr><td>—</td><td>Overcast the day before; a calm bay surface</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Left column: <cite>Recipe Jubilee!</cite> (1964), the museum exhibit and the James Dorgan interview. Right column: the Auburn University Marine Extension and Research Center diagram in the exhibit, and Loesch (1960). Most of the old signs match the science.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery" id="science">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 3</span><h2>Why the Fish Come In</h2></div>
+      <div class="prose" style="margin-bottom: 24px">
+        <p>A jubilee happens when the water near the bottom of the bay runs out of oxygen and the wind and tide push that water up against the beach. Fish and crabs move ahead of it until they are pinned at the shoreline.</p>
+        <blockquote class="panel">
+          <p>"The fresh water mixes with the salt water and creates this area of water with depleted oxygen, and this wall of water moves in waves towards the beach.… It may only last about 20 minutes."</p>
+          <cite>James Dorgan, interview, 1:06</cite>
+        </blockquote>
+        <p>Dorgan's "wall of water" matches what scientists found. His idea that the fresh and salt water <em>mix</em> is the same explanation locals gave before 1960. The research shows the opposite: the two layers stay separate, and that's why the bottom water runs out of oxygen. The old explanation is still part of how people tell the story.</p>
+      </div>
+
+      <figure class="diagram" aria-label="Cross-section of Mobile Bay during a jubilee">
+        <svg viewBox="0 0 760 300" role="img" aria-label="An east wind pushes the fresh surface water away from the Eastern Shore while low-oxygen bottom water moves up the slope onto the beach">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill: var(--ink)"/></marker>
+          </defs>
+          <!-- water layers -->
+          <path d="M20 110 L640 110 L700 150 L20 150 Z" style="fill: var(--fresh)" opacity="0.85"/>
+          <path d="M20 150 L700 150 L740 205 L740 280 L20 280 Z" style="fill: var(--hypoxic)" opacity="0.75"/>
+          <!-- sloped bottom / beach -->
+          <path d="M20 280 L520 280 L740 120 L740 290 L20 290 Z" style="fill: var(--sand)"/>
+          <path d="M520 280 L740 120" style="stroke: var(--muted)" stroke-width="1.5" fill="none"/>
+          <!-- wind -->
+          <path d="M690 60 L470 60" style="stroke: var(--ink)" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+          <text x="470" y="44">East wind</text>
+          <!-- surface water moving offshore -->
+          <path d="M560 128 L330 128" style="stroke: var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <text x="40" y="133">Fresh surface water, more oxygen</text>
+          <!-- bottom water moving toward shore -->
+          <path d="M300 240 L560 240 L640 185" style="stroke: var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <text x="40" y="215">Salty bottom water, low oxygen</text>
+          <text x="40" y="232" class="quiet">rides in with the rising tide</text>
+          <!-- crowded animals at the edge -->
+          <g style="fill: var(--ink)">
+            <ellipse cx="664" cy="168" rx="9" ry="4"/><ellipse cx="682" cy="158" rx="9" ry="4"/><ellipse cx="672" cy="152" rx="6" ry="3"/><ellipse cx="694" cy="149" rx="6" ry="3"/><ellipse cx="652" cy="176" rx="7" ry="3"/>
+          </g>
+          <path d="M700 196 L700 214" style="stroke: var(--muted)" stroke-width="1"/>
+          <text x="740" y="232" text-anchor="end">Fish and crabs</text>
+          <text x="740" y="249" text-anchor="end">pinned at the beach</text>
+          <text x="40" y="30" class="quiet">WEST · toward the middle of the bay</text>
+          <text x="740" y="30" class="quiet" text-anchor="end">EAST · Fairhope beach</text>
+        </svg>
+      </figure>
+
+      <ol class="steps">
+        <li><h3>The water layers</h3><p>In summer, lighter fresh river water floats on top of heavier salt water from the Gulf. The two layers don't mix.</p></li>
+        <li><h3>The bottom runs out of air</h3><p>Dead plants and algae sink and rot on the bottom. Bacteria use up the oxygen in the bottom layer.</p></li>
+        <li><h3>Wind and tide push it in</h3><p>An east wind blows the surface water away from the Eastern Shore. The rising tide carries the low-oxygen water toward the beach.</p></li>
+        <li><h3>Trapped at the edge</h3><p>Flounder, crabs and shrimp move ahead of the bad water until they reach the shallows. When the wind shifts or the sun comes up, the water mixes and they swim back out.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="gallery" id="tools">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 4</span><h2>Tools of the Harvest</h2></div>
+      <div class="prose" style="margin-bottom: 28px">
+        <p>Fairhope families made their living from Mobile Bay for more than a hundred years, not only during jubilees. These objects in the museum belonged to local people.</p>
+      </div>
+      <div class="objects">
+        <div class="object">
+          <img src="img/flounder-gig.jpg" alt="A homemade flounder gig with a flounder model, cork floats and fishing lures on a net" width="1050" height="1400" loading="lazy">
+          <div class="placard">
+            <span class="label">Object · Fishing gear</span>
+            <h3>Anchor, homemade flounder gig, rods and reels</h3>
+            <p>Belonged to Bill Barrett, an early member of the Fairhope Yacht Club. A gig is a pronged spear for spearing flounder in shallow water.</p>
+          </div>
+        </div>
+        <div class="object">
+          <img src="img/pennington.jpg" alt="A yellow fisherman's slicker next to exhibit photos and a newspaper ad for Penny's Seafood" width="1050" height="1400" loading="lazy">
+          <div class="placard">
+            <span class="label">Object · Clothing</span>
+            <h3>Yellow fisherman's slicker</h3>
+            <p>Worn by Fairhope fisherman Joseph Pennington.</p>
+          </div>
+        </div>
+        <div class="object">
+          <img src="img/pennys-ad.jpg" alt="Newspaper ad reading Watch for opening date of Penny's Seafood, 23 South Section Street, next door to Eastern Shore Cleaners, Joe Pennington, owner" width="1170" height="1202" loading="lazy">
+          <div class="placard">
+            <span class="label">Object · Newspaper ad</span>
+            <h3>"Watch for opening date: Penny's Seafood"</h3>
+            <p>23 South Section Street, Fairhope, "next door to Eastern Shore Cleaners." Joe Pennington, owner. Date unknown.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery" id="voices">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 5</span><h2>Voices from the Shore</h2></div>
+      <div class="voice">
+        <a class="video-link" href="https://drive.google.com/file/d/1yj2OOUcAIWNO95Re18hDeTDPkTFQd6Fb/view?usp=share_link" target="_blank" rel="noopener">
+          <img src="img/dorgan.jpg" alt="James Dorgan speaking to the camera during his interview" width="720" height="1280" loading="lazy">
+          <span class="play"><span class="tri" aria-hidden="true"></span>Watch the interview · 3 min</span>
+        </a>
+        <div class="quotes">
+          <div class="prose"><p><strong>James Dorgan</strong> is a lifelong Fairhope resident who has spent 57 years on the Eastern Shore. Some of his earliest memories are jubilees at his family's bay house at Mullet Point, on County Road 1 south of the Grand Hotel. The house had roll-up windows, bunk beds, concrete floors and a wharf out front.</p></div>
+          <div class="quote">
+            <p>"In the middle of the night, we would hear something outside and hear voices and look out into the bay. And there were neighbors with big spotlights and gigs and fishing nets and buckets.… Then you'd hear in the distance, somebody would yell, 'Jubilee!' and all the neighbors' lights up and down the coast would come on and people would come out in their pajamas."</p>
+            <span class="label">James Dorgan · 0:36</span>
+          </div>
+          <div class="quote">
+            <p>"You'd go out and catch as many flounder as you can and have flounder for the rest of the summer. Or you'd catch crab and make crab dip."</p>
+            <span class="label">James Dorgan · 2:27</span>
+          </div>
+          <div class="quote">
+            <p>"In that mix there are sand sharks and there's jellyfish and there's stingrays that you could step on. One of those occasions, my aunt stepped on a stingray and we had to send her to the hospital.… It is a little bit chaotic and it's crazy."</p>
+            <span class="label">James Dorgan · 2:35</span>
+          </div>
+          <div class="quote">
+            <p>"The conditions of a jubilee are typically late August, with an easterly breeze, low tide, and it follows heavy rains."</p>
+            <span class="label">James Dorgan · 2:57</span>
+          </div>
+        </div>
+      </div>
+      <figure class="photo" style="margin-top: 40px">
+        <img src="img/photos-night.jpg" alt="Exhibit photos of people catching flounder at night, a catch laid out on a pier, and the jubilee science diagram" width="1400" height="1050" loading="lazy">
+        <figcaption>Jubilee photos from the exhibit, Fairhope Museum of History.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="gallery" id="beyond">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Gallery 6</span><h2>Is Mobile Bay the Only One?</h2></div>
+      <div class="prose">
+        <p>Local stories often say Mobile Bay is one of only two places in the world with jubilees. James Dorgan says it too: "a unique occurrence that happens only in Mobile Bay on the eastern shore, as well as one place in Japan." The other one people name is Tokyo Bay in Japan, where wind blowing off the land can pull low-oxygen bottom water up to the shore. The Japanese call it <i>aoshio</i>, or "blue tide."</p>
+        <p>The cause is similar, but the result is different. In Tokyo Bay the water turns milky blue and the fish and clams mostly die. Mobile Bay is the only place where jubilees are recorded as a regular event that people go out to harvest.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">Closing</span><h2>Why It Still Matters</h2></div>
+      <div class="prose">
+        <p>For about 100 years, people on the Eastern Shore knew how to predict a Jubilee before scientists figured out what caused it. They passed down what they knew through family traditions and a legacy of watching the bay and recognizing the signs, like an east wind and late-summer weather. They got a lot right, even though some details, like the role of the tide, were not completely understood.</p>
+        <p>My favorite part of James Dorgan’s interview was when he talked about hearing someone yell “Jubilee!” in the middle of the night and seeing neighbors come outside in their pajamas to head down to the water. It shows how a natural event became a tradition that brought the whole community together.</p>
+        <p>I have only seen the very end of a Jubilee a few years ago, but I think it is pretty amazing that something this unique happens right here where we live. A Jubilee is more than just a natural event. It is part of the history and traditions that make the Eastern Shore special, and it can be passed down for generations to come. I love to fish, so I hope to experience a Jubilee for myself one day. After all, living on the Eastern Shore means we have the chance to witness something that is a real “shore thing!”</p>
+        <p class="label" style="color: var(--muted)">Jaxson Vestal</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery sources" id="sources">
+    <div class="wrap">
+      <div class="gallery-head"><span class="label">References</span><h2>Sources</h2></div>
+      <h3>Primary sources</h3>
+      <ol>
+        <li>Dorgan, James. Personal interview. Conducted by Jaxson Vestal, 6 Oct. 2026.</li>
+        <li>"Jubilee! An Eastern Shore Seafood Phenomenon." Exhibit, Fairhope Museum of History, Fairhope, Alabama. Visited 2 Oct. 2026.</li>
+        <li>Junior League of Mobile. <cite>Recipe Jubilee!</cite> Junior League of Mobile, Inc., 1964.</li>
+      </ol>
+      <h3>Secondary sources</h3>
+      <ol>
+        <li>Loesch, Harold. "Sporadic Mass Shoreward Migrations of Demersal Fish and Crustaceans in Mobile Bay, Alabama." <cite>Ecology</cite>, vol. 41, no. 2, 1960, pp. 292–298.</li>
+        <li>May, Edwin B. "Extensive Oxygen Depletion in Mobile Bay, Alabama." <cite>Limnology and Oceanography</cite>, vol. 18, no. 3, 1973, pp. 353–366.</li>
+        <li>"Jubilees Leave Sea Life Breathless." Graphic, <cite>Mobile Register</cite>. Source: Auburn University Marine Extension and Research Center. Shown in the museum exhibit.</li>
+        <li>Thompson-Messina, Jennifer. <a href="https://www.encyclopediaofalabama.org/article/h-2379">"Daphne."</a> <cite>Encyclopedia of Alabama</cite>, 2009, updated 2024.</li>
+        <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3918403/">"Estimating the Occurrence of Wind-Driven Coastal Upwelling Associated with 'Aoshio' on the Northeast Shore of Tokyo Bay, Japan."</a> PubMed Central.</li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Exhibit by Jaxson Vestal. Exhibit photographs taken by Jaxson Vestal at the Fairhope Museum of History, October 2, 2026. Cookbook pages from <cite>Recipe Jubilee!</cite> (1964).</div>
+</footer>
+
+</body>
+</html>
